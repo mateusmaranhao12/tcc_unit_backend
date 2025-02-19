@@ -9,8 +9,24 @@ header("Content-Type: application/json");
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Verifica se os dados foram recebidos corretamente
-if (!$data || empty($data['nome']) || empty($data['email']) || empty($data['senha']) || empty($data['crm']) || empty($data['horarios'])) {
-    echo json_encode(["success" => false, "message" => "Dados inválidos ou incompletos"]);
+if (
+    !$data || 
+    empty($data['nome']) ||
+    empty($data['sobrenome']) ||
+    empty($data['email']) || 
+    empty($data['senha']) || 
+    empty($data['dataNascimento']) ||
+    empty($data['genero']) ||
+    empty($data['crm']) || 
+    empty($data['especialidade']) ||
+    empty($data['telefone']) ||
+    empty($data['cpf']) ||
+    empty($data['endereco']) ||
+    (!isset($data['horarios']) || !is_array(json_decode($data['horarios'], true)) || count(json_decode($data['horarios'], true)) === 0) ||
+    empty($data['valorConsulta']) ||
+    empty($data['imagem'])
+    ) {
+    echo json_encode(["success" => false, "message" => "Dados inválidos ou incompletos, preencha todos os campos obrigatórios"]);
     exit;
 }
 
@@ -25,12 +41,23 @@ if ($checkStmt->rowCount() > 0) {
     exit;
 }
 
+// Verifica se o CPF já está cadastrado
+$checkQuery = "SELECT id FROM medicos WHERE cpf = :cpf";
+$checkStmt = $conn->prepare($checkQuery);
+$checkStmt->bindParam(":cpf", $data['cpf']);
+$checkStmt->execute();
+
+if ($checkStmt->rowCount() > 0) {
+    echo json_encode(["success" => false, "message" => "CPF já cadastrado"]);
+    exit;
+}
+
 // Converte os horários selecionados para JSON
 $horariosJSON = json_encode(json_decode($data['horarios'], true));
 
 // Query para inserir no banco
-$query = "INSERT INTO medicos (nome, sobrenome, email, senha, dataNascimento, genero, crm, especialidade, telefone, cpf, endereco, horario, valorConsulta, imagem)
-          VALUES (:nome, :sobrenome, :email, :senha, :dataNascimento, :genero, :crm, :especialidade, :telefone, :cpf, :endereco, :horario, :valorConsulta, :imagem)";
+$query = "INSERT INTO medicos (nome, sobrenome, email, senha, dataNascimento, genero, crm, especialidade, telefone, cpf, endereco, horarios, valorConsulta, imagem)
+          VALUES (:nome, :sobrenome, :email, :senha, :dataNascimento, :genero, :crm, :especialidade, :telefone, :cpf, :endereco, :horarios, :valorConsulta, :imagem)";
 
 $stmt = $conn->prepare($query);
 
@@ -55,7 +82,7 @@ $stmt->bindParam(":especialidade", $data['especialidade']);
 $stmt->bindParam(":telefone", $data['telefone']);
 $stmt->bindParam(":cpf", $data['cpf']);
 $stmt->bindParam(":endereco", $data['endereco']);
-$stmt->bindParam(":horario", $horariosJSON);
+$stmt->bindParam(":horarios", $horariosJSON);
 $stmt->bindParam(":valorConsulta", $data['valorConsulta']);
 $stmt->bindParam(":imagem", $imagem, PDO::PARAM_LOB);
 

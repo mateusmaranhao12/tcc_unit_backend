@@ -8,8 +8,20 @@ header("Content-Type: application/json");
 // Verifica se os dados foram enviados corretamente
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!$data) {
-    echo json_encode(["success" => false, "message" => "Dados inválidos"]);
+if (
+    !$data || 
+    empty($data['nome']) || 
+    empty($data['sobrenome']) ||
+    empty($data['email']) ||
+    empty($data['senha']) ||
+    empty($data['dataNascimento']) ||
+    empty($data['cpf']) ||
+    empty($data['endereco']) ||
+    empty($data['telefone']) ||
+    empty($data['genero']) ||
+    empty($data['convenio'])
+    ) {
+    echo json_encode(["success" => false, "message" => "Preencha todos os campos obrigatórios"]);
     exit;
 }
 
@@ -21,6 +33,17 @@ $checkStmt->execute();
 
 if ($checkStmt->rowCount() > 0) {
     echo json_encode(["success" => false, "message" => "E-mail já cadastrado"]);
+    exit;
+}
+
+// Verifica se o CPF já está cadastrado
+$checkQuery = "SELECT id FROM pacientes WHERE cpf = :cpf";
+$checkStmt = $conn->prepare($checkQuery);
+$checkStmt->bindParam(":cpf", $data['cpf']);
+$checkStmt->execute();
+
+if ($checkStmt->rowCount() > 0) {
+    echo json_encode(["success" => false, "message" => "CPF já cadastrado"]);
     exit;
 }
 

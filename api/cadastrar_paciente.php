@@ -9,19 +9,24 @@ header("Content-Type: application/json");
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (
-    !$data || 
-    empty($data['nome']) || 
+    !$data ||
+    empty($data['nome']) ||
     empty($data['sobrenome']) ||
     empty($data['email']) ||
-    empty($data['senha']) ||
     empty($data['dataNascimento']) ||
     empty($data['cpf']) ||
     empty($data['endereco']) ||
     empty($data['telefone']) ||
     empty($data['genero']) ||
     empty($data['convenio'])
-    ) {
-    echo json_encode(["success" => false, "message" => "Preencha todos os campos obrigatórios"]);
+) {
+    echo json_encode(["success" => false, "message" => "Preencha todos os campos obrigatórios."]);
+    exit;
+}
+
+// Validação específica para a senha no back-end (apenas por segurança)
+if (strlen($data['senha']) < 5) {
+    echo json_encode(["success" => false, "message" => "A senha deve ter no mínimo 5 caracteres."]);
     exit;
 }
 

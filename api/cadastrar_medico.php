@@ -10,14 +10,13 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 // Verifica se os dados foram recebidos corretamente
 if (
-    !$data || 
+    !$data ||
     empty($data['nome']) ||
     empty($data['sobrenome']) ||
-    empty($data['email']) || 
-    empty($data['senha']) || 
+    empty($data['email']) ||
     empty($data['dataNascimento']) ||
     empty($data['genero']) ||
-    empty($data['crm']) || 
+    empty($data['crm']) ||
     empty($data['especialidade']) ||
     empty($data['telefone']) ||
     empty($data['cpf']) ||
@@ -25,8 +24,14 @@ if (
     (!isset($data['horarios']) || !is_array(json_decode($data['horarios'], true)) || count(json_decode($data['horarios'], true)) === 0) ||
     empty($data['valorConsulta']) ||
     empty($data['imagem'])
-    ) {
+) {
     echo json_encode(["success" => false, "message" => "Dados inválidos ou incompletos, preencha todos os campos obrigatórios"]);
+    exit;
+}
+
+// Validação específica para a senha no back-end (apenas por segurança)
+if (strlen($data['senha']) < 5) {
+    echo json_encode(["success" => false, "message" => "A senha deve ter no mínimo 5 caracteres."]);
     exit;
 }
 

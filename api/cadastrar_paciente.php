@@ -24,9 +24,27 @@ if (
     exit;
 }
 
-// Validação específica para a senha no back-end (apenas por segurança)
+// Validação específica para a senha
 if (strlen($data['senha']) < 5) {
     echo json_encode(["success" => false, "message" => "A senha deve ter no mínimo 5 caracteres."]);
+    exit;
+}
+
+// Validação de e-mail
+if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(["success" => false, "message" => "E-mail inválido."]);
+    exit;
+}
+
+// Validação de CPF
+if (strlen($data['cpf']) < 14) {
+    echo json_encode(["success" => false, "message" => "CPF inválido."]);
+    exit;
+}
+
+// Validação de Telefone
+if (strlen($data['telefone']) < 15) {
+    echo json_encode(["success" => false, "message" => "Número de telefone inválido."]);
     exit;
 }
 

@@ -117,8 +117,13 @@ $data['senha'] = password_hash($data['senha'], PASSWORD_DEFAULT);
 // Converte imagem para formato BLOB (se enviada)
 $imagem = null;
 if (!empty($data['imagem'])) {
-    $imagem = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $data['imagem']));
+    // Remove o prefixo 'data:image/png;base64,' ou similar antes de decodificar
+    $imagem = preg_replace('#^data:image/\w+;base64,#i', '', $data['imagem']);
+    $imagem = base64_decode($imagem);
 }
+
+// Bind da imagem como LONGBLOB
+$stmt->bindParam(":imagem", $imagem, PDO::PARAM_LOB);
 
 // Bind dos valores
 $stmt->bindParam(":nome", $data['nome']);

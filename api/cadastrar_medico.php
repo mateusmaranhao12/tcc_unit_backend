@@ -59,6 +59,16 @@ if (strlen($data['telefone']) < 15) {
     exit;
 }
 
+// Validação de idade mínima de 21 anos
+$hoje = new DateTime();
+$dataNascimento = new DateTime($data['dataNascimento']);
+$idade = $hoje->diff($dataNascimento)->y;
+
+if ($idade < 21) {
+    echo json_encode(["success" => false, "message" => "O médico deve ter no mínimo 21 anos."]);
+    exit;
+}
+
 // Verifica se o e-mail já está cadastrado
 $checkQuery = "SELECT id FROM medicos WHERE email = :email";
 $checkStmt = $conn->prepare($checkQuery);

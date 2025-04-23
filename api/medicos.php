@@ -7,7 +7,7 @@ header("Content-Type: application/json");
 
 try {
     // Consulta para obter os médicos cadastrados
-    $query = "SELECT nome, sobrenome, especialidade, imagem FROM medicos";
+    $query = "SELECT nome, sobrenome, especialidade, imagem, email FROM medicos";
     $stmt = $conn->prepare($query);
     $stmt->execute();
 

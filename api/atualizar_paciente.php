@@ -11,6 +11,29 @@ if (!$data || empty($data['email'])) {
     exit;
 }
 
+// Verifica se o CPF já está em uso por outro paciente
+$verificaCpf = $conn->prepare("SELECT email FROM pacientes WHERE cpf = :cpf AND email != :email");
+$verificaCpf->bindParam(':cpf', $data['cpf']);
+$verificaCpf->bindParam(':email', $data['email']);
+$verificaCpf->execute();
+
+if ($verificaCpf->rowCount() > 0) {
+    echo json_encode(['success' => false, 'message' => 'Este CPF já está cadastrado por outro paciente.']);
+    exit;
+}
+
+// Validação de CPF
+if (strlen($data['cpf']) < 14) {
+    echo json_encode(["success" => false, "message" => "CPF inválido."]);
+    exit;
+}
+
+// Validação de Telefone
+if (strlen($data['telefone']) < 15) {
+    echo json_encode(["success" => false, "message" => "Número de telefone inválido."]);
+    exit;
+}
+
 $query = "UPDATE pacientes SET 
             nome = :nome,
             sobrenome = :sobrenome,

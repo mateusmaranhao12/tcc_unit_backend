@@ -1,6 +1,5 @@
 /*Criar banco de dados*/
 CREATE DATABASE tcc_unit
-
 /*Tabela de pacientes*/
 CREATE TABLE pacientes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -37,4 +36,17 @@ CREATE TABLE medicos (
     valorConsulta DECIMAL(10, 2) NOT NULL,
     imagem LONGBLOB NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+/*Consultas*/
+CREATE TABLE consultas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_paciente INT NOT NULL,
+    id_medico INT NOT NULL,
+    data_consulta DATE NOT NULL,
+    horario_consulta VARCHAR(20) NOT NULL,
+    status ENUM('agendada', 'cancelada', 'realizada') DEFAULT 'agendada',
+    -- Relacionamentos
+    FOREIGN KEY (id_paciente) REFERENCES pacientes(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_medico) REFERENCES medicos(id) ON DELETE CASCADE
 );

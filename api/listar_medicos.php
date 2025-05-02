@@ -5,7 +5,7 @@ include_once '../db/database.php';
 header('Content-Type: application/json');
 
 try {
-    $stmt = $conn->query("SELECT nome, sobrenome, especialidade, horarios FROM medicos");
+    $stmt = $conn->query("SELECT nome, sobrenome, especialidade, email, horarios FROM medicos");
     $medicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Decodifica os horários se estiverem em JSON

@@ -47,7 +47,10 @@ $horario_consulta = $data['horario_consulta'];
 // Verifica se já existe uma consulta marcada com o mesmo médico, data e horário
 $verificaMedico = $conn->prepare("
     SELECT 1 FROM consultas 
-    WHERE id_medico = :id_medico AND data_consulta = :data_consulta AND horario_consulta = :horario_consulta
+    WHERE id_medico = :id_medico 
+    AND data_consulta = :data_consulta 
+    AND horario_consulta = :horario_consulta 
+    AND status = 'agendada'
 ");
 $verificaMedico->execute([
     ':id_medico' => $id_medico,
@@ -63,7 +66,10 @@ if ($verificaMedico->fetch()) {
 // Verifica se o paciente já marcou com qualquer médico no mesmo dia e horário
 $verificaPaciente = $conn->prepare("
     SELECT 1 FROM consultas 
-    WHERE id_paciente = :id_paciente AND data_consulta = :data_consulta AND horario_consulta = :horario_consulta
+    WHERE id_paciente = :id_paciente 
+    AND data_consulta = :data_consulta 
+    AND horario_consulta = :horario_consulta 
+    AND status = 'agendada'
 ");
 $verificaPaciente->execute([
     ':id_paciente' => $id_paciente,

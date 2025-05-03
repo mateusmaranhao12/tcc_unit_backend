@@ -26,11 +26,12 @@ if (!$paciente) {
 $stmt = $conn->prepare("
     SELECT c.id, c.data_consulta, c.horario_consulta, m.nome AS nome_medico, m.sobrenome AS sobrenome_medico
     FROM consultas c
-    JOIN medicos m ON m.id = c.id_medico
-    WHERE c.id_paciente = :id
+    JOIN medicos m ON c.id_medico = m.id
+    JOIN pacientes p ON c.id_paciente = p.id
+    WHERE p.email = :email AND c.status = 'agendada'
     ORDER BY c.data_consulta ASC, c.horario_consulta ASC
 ");
-$stmt->bindParam(':id', $paciente['id']);
+$stmt->bindParam(':email', $_GET['email']);
 $stmt->execute();
 $consultas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

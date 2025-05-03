@@ -24,11 +24,11 @@ if (!$paciente) {
 
 // Buscar consultas do paciente com info do médico
 $stmt = $conn->prepare("
-    SELECT c.id, c.data_consulta, c.horario_consulta, m.nome AS nome_medico, m.sobrenome AS sobrenome_medico
+    SELECT c.id, c.data_consulta, c.horario_consulta, c.status, m.nome AS nome_medico, m.sobrenome AS sobrenome_medico
     FROM consultas c
     JOIN medicos m ON c.id_medico = m.id
     JOIN pacientes p ON c.id_paciente = p.id
-    WHERE p.email = :email AND c.status = 'agendada'
+    WHERE p.email = :email AND c.status
     ORDER BY c.data_consulta ASC, c.horario_consulta ASC
 ");
 $stmt->bindParam(':email', $_GET['email']);

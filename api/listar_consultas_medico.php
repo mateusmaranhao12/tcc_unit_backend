@@ -31,12 +31,12 @@ $horaAgora = date('H:i');
 try {
     $stmt = $conn->prepare("
         SELECT 
-            c.id, c.data_consulta, c.horario_consulta,
+            c.id, c.data_consulta, c.horario_consulta, c.status,
             p.nome AS nome_paciente, p.sobrenome AS sobrenome_paciente
         FROM consultas c
         JOIN pacientes p ON c.id_paciente = p.id
         WHERE c.id_medico = :id_medico 
-          AND c.status = 'agendada'
+          AND c.status
           AND (
               c.data_consulta > :data_hoje
               OR (c.data_consulta = :data_hoje AND 

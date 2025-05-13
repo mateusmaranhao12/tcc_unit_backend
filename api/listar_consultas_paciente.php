@@ -22,9 +22,17 @@ if (!$paciente) {
     exit;
 }
 
-// Buscar consultas do paciente com info do médico
+// Buscar consultas do paciente com info do médico e modalidade
 $stmt = $conn->prepare("
-    SELECT c.id, c.data_consulta, c.horario_consulta, c.status, c.id_medico, m.nome AS nome_medico, m.sobrenome AS sobrenome_medico
+    SELECT 
+        c.id, 
+        c.data_consulta, 
+        c.horario_consulta, 
+        c.status, 
+        c.modalidade,
+        c.id_medico, 
+        m.nome AS nome_medico, 
+        m.sobrenome AS sobrenome_medico
     FROM consultas c
     JOIN medicos m ON c.id_medico = m.id
     JOIN pacientes p ON c.id_paciente = p.id

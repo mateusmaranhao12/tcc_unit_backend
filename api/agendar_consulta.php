@@ -11,9 +11,17 @@ if (
     empty($data['email_paciente']) ||
     empty($data['email_medico']) ||
     empty($data['data_consulta']) ||
-    empty($data['horario_consulta'])
+    empty($data['horario_consulta']) ||
+    empty($data['modalidade_consulta'])
 ) {
     echo json_encode(['success' => false, 'message' => 'Dados incompletos.']);
+    exit;
+}
+
+$modalidade = $data['modalidade_consulta'];
+$modalidadesValidas = ['presencial', 'online'];
+if (!in_array($modalidade, $modalidadesValidas)) {
+    echo json_encode(['success' => false, 'message' => 'Modalidade inválida.']);
     exit;
 }
 
@@ -82,16 +90,17 @@ if ($verificaPaciente->fetch()) {
     exit;
 }
 
-// Inserir nova consulta
+// Inserir nova consulta com modalidade
 $insert = $conn->prepare("
-    INSERT INTO consultas (id_paciente, id_medico, data_consulta, horario_consulta) 
-    VALUES (:id_paciente, :id_medico, :data_consulta, :horario_consulta)
+    INSERT INTO consultas (id_paciente, id_medico, data_consulta, horario_consulta, modalidade) 
+    VALUES (:id_paciente, :id_medico, :data_consulta, :horario_consulta, :modalidade)
 ");
 
 $insert->bindParam(':id_paciente', $id_paciente);
 $insert->bindParam(':id_medico', $id_medico);
 $insert->bindParam(':data_consulta', $data_consulta);
 $insert->bindParam(':horario_consulta', $horario_consulta);
+$insert->bindParam(':modalidade', $modalidade);
 
 if ($insert->execute()) {
     echo json_encode(['success' => true, 'message' => 'Consulta agendada com sucesso.']);

@@ -46,6 +46,7 @@ CREATE TABLE consultas (
     data_consulta DATE NOT NULL,
     horario_consulta VARCHAR(20) NOT NULL,
     status ENUM('agendada', 'cancelada', 'realizada') DEFAULT 'agendada',
+    modalidade ENUM('presencial', 'online') NOT NULL DEFAULT 'presencial',
     -- Relacionamentos
     FOREIGN KEY (id_paciente) REFERENCES pacientes(id) ON DELETE CASCADE,
     FOREIGN KEY (id_medico) REFERENCES medicos(id) ON DELETE CASCADE

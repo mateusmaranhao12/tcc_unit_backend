@@ -4,7 +4,7 @@ include_once '../db/database.php';
 
 header('Content-Type: application/json');
 
-date_default_timezone_set('America/Sao_Paulo'); //fuso horario padrao
+date_default_timezone_set('America/Sao_Paulo'); // fuso horário padrão
 
 $email = $_GET['email'] ?? null;
 
@@ -31,8 +31,14 @@ $horaAgora = date('H:i');
 try {
     $stmt = $conn->prepare("
         SELECT 
-            c.id, c.id_medico, c.data_consulta, c.horario_consulta, c.status,
-            p.nome AS nome_paciente, p.sobrenome AS sobrenome_paciente
+            c.id, 
+            c.id_medico, 
+            c.data_consulta, 
+            c.horario_consulta, 
+            c.status, 
+            c.modalidade,
+            p.nome AS nome_paciente, 
+            p.sobrenome AS sobrenome_paciente
         FROM consultas c
         JOIN pacientes p ON c.id_paciente = p.id
         WHERE c.id_medico = :id_medico 

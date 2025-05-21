@@ -51,3 +51,14 @@ CREATE TABLE consultas (
     FOREIGN KEY (id_paciente) REFERENCES pacientes(id) ON DELETE CASCADE,
     FOREIGN KEY (id_medico) REFERENCES medicos(id) ON DELETE CASCADE
 );
+
+/*Notificações*/
+CREATE TABLE notificacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_medico INT NOT NULL,
+    mensagem TEXT NOT NULL,
+    url_destino VARCHAR(255) NOT NULL,
+    lida BOOLEAN DEFAULT FALSE,
+    criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_medico) REFERENCES medicos(id) ON DELETE CASCADE
+);

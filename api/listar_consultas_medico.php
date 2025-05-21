@@ -32,7 +32,8 @@ try {
     $stmt = $conn->prepare("
         SELECT 
             c.id, 
-            c.id_medico, 
+            c.id_medico,
+            c.id_paciente,
             c.data_consulta, 
             c.horario_consulta, 
             c.status, 

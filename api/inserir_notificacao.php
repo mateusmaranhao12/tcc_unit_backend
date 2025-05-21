@@ -4,34 +4,28 @@ include_once '../db/database.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$email_medico = $data['email_medico'] ?? null;
+$destinatario = $data['destinatario'] ?? null; // 'medico' ou 'paciente'
+$id_destinatario = $data['id_destinatario'] ?? null;
 $mensagem = $data['mensagem'] ?? null;
 $url_destino = $data['url_destino'] ?? null;
 
-if (!$email_medico || !$mensagem || !$url_destino) {
+if (!$destinatario || !$id_destinatario || !$mensagem || !$url_destino) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
     exit;
 }
 
-// Buscar o ID do médico
-$stmt = $conn->prepare("SELECT id FROM medicos WHERE email = ?");
-$stmt->execute([$email_medico]);
-$medico = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$medico) {
-    http_response_code(404);
-    echo json_encode(['success' => false, 'message' => 'Médico não encontrado']);
+// Inserir notificação conforme o destinatário
+if ($destinatario === 'medico') {
+    $stmt = $conn->prepare("INSERT INTO notificacoes (destinatario, id_medico, mensagem, url_destino) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$destinatario, $id_destinatario, $mensagem, $url_destino]);
+} elseif ($destinatario === 'paciente') {
+    $stmt = $conn->prepare("INSERT INTO notificacoes (destinatario, id_paciente, mensagem, url_destino) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$destinatario, $id_destinatario, $mensagem, $url_destino]);
+} else {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Destinatário inválido']);
     exit;
 }
 
-$id_medico = $medico['id'];
-
-// Inserir notificação
-$stmt = $conn->prepare("INSERT INTO notificacoes (id_medico, mensagem, url_destino) VALUES (?, ?, ?)");
-if ($stmt->execute([$id_medico, $mensagem, $url_destino])) {
-    echo json_encode(['success' => true]);
-} else {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro ao inserir notificação']);
-}
+echo json_encode(['success' => true]);

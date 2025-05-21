@@ -2,15 +2,26 @@
 include_once '../config/cors.php';
 include_once '../db/database.php';
 
-$id_medico = $_GET['id_medico'] ?? null;
+$destinatario = $_GET['destinatario'] ?? null;
+$id = $_GET['id'] ?? null;
 
-if ($id_medico) {
-    $stmt = $conn->prepare("SELECT * FROM notificacoes WHERE id_medico = ? AND lida = 0 ORDER BY criada_em DESC");
-    $stmt->execute([$id_medico]);
+if (!$destinatario || !$id) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Parâmetros incompletos']);
+    exit;
+}
 
-    $notificacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo json_encode($notificacoes);
+if ($destinatario === 'medico') {
+    $stmt = $conn->prepare("SELECT * FROM notificacoes WHERE destinatario = 'medico' AND id_medico = ? ORDER BY criada_em DESC");
+    $stmt->execute([$id]);
+} elseif ($destinatario === 'paciente') {
+    $stmt = $conn->prepare("SELECT * FROM notificacoes WHERE destinatario = 'paciente' AND id_paciente = ? ORDER BY criada_em DESC");
+    $stmt->execute([$id]);
 } else {
     http_response_code(400);
-    echo json_encode(['status' => 'erro', 'mensagem' => 'ID do médico não informado']);
+    echo json_encode(['success' => false, 'message' => 'Destinatário inválido']);
+    exit;
 }
+
+$notificacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+echo json_encode($notificacoes);

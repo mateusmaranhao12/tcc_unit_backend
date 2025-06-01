@@ -39,7 +39,9 @@ try {
             c.status, 
             c.modalidade,
             p.nome AS nome_paciente, 
-            p.sobrenome AS sobrenome_paciente
+            p.sobrenome AS sobrenome_paciente,
+            p.email AS email_paciente,
+            p.telefone AS telefone_paciente
         FROM consultas c
         JOIN pacientes p ON c.id_paciente = p.id
         WHERE c.id_medico = :id_medico 

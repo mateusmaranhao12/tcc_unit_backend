@@ -48,8 +48,8 @@ if (strlen($data['cpf']) < 14) {
 }
 
 // Validação de CRM
-if (strlen($data['crm']) < 7) {
-    echo json_encode(["success" => false, "message" => "CRM inválido."]);
+if (!preg_match('/^\d{6,8}(-[A-Z]{2})?$/', $data['crm'])) {
+    echo json_encode(["success" => false, "message" => "CRM inválido. Formato esperado: 6 a 8 dígitos, opcionalmente seguidos por '-UF'."]);
     exit;
 }
 
